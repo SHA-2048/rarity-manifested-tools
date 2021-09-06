@@ -1,11 +1,14 @@
 import {
-    Rarity
+    Rarity, RarityGold
 } from "../contracts";
-import {levelUp, rarityInstance} from "./common";
+import {levelUp, rarityGoldInstance, rarityInstance} from "./common";
+import {ethers} from "hardhat";
 
 async function main() {
-    const rarity: Rarity = await rarityInstance();
-    await levelUp(rarity);
+    const [deployer] = await ethers.getSigners();
+    const rarity: Rarity = await rarityInstance(deployer);
+    const rarityGold: RarityGold = await rarityGoldInstance(deployer);
+    await levelUp(rarity, rarityGold);
 }
 
 main()

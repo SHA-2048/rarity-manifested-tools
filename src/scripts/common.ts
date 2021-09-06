@@ -1,8 +1,9 @@
-import {Rarity, Rarity__factory} from "../contracts";
+import {Rarity, Rarity__factory, RarityGold, RarityGold__factory} from "../contracts";
 import {BigNumber} from "ethers";
 import {ethers} from "hardhat";
 
 const RARITY_CONTRACT = "0xce761d788df608bd21bdd59d6f4b54b2e27f25bb";
+const RARITY_GOLD_CONTRACT = "0x2069b76afe6b734fb65d1d099e7ec64ee9cc76b2";
 const XP_PER_DAY = BigNumber.from(250).mul(BigNumber.from(10).pow(18));
 
 export async function displayStatus(rarity: Rarity) {
@@ -24,7 +25,8 @@ export async function displayStatus(rarity: Rarity) {
     }
 }
 
-export async function levelUp(rarity: Rarity) {
+export async function levelUp(rarity: Rarity, rarityGold: RarityGold) {
+
     for (let i = 0; i < TOKEN_IDS.length; i++) {
         const id: string = TOKEN_IDS[i];
 
@@ -33,7 +35,12 @@ export async function levelUp(rarity: Rarity) {
 
         if (summoner._xp.gte(xpRequired)) {
             console.log(`${id} is ready to level up`);
-            await rarity.level_up(id);
+            let trx = await rarity.level_up(id);
+            await trx.wait();
+
+            console.log(`claiming gold for ${id}`);
+            trx = await rarityGold.claim(id);
+            await trx.wait();
         } else {
             console.log(`${id} is not ready to level up`);
         }
@@ -51,7 +58,8 @@ export async function adventure(rarity: Rarity) {
             console.log(`${id} needs to wait until ${new Date(log).toLocaleString()} to adventure again...`);
         } else {
             console.log(`${id} is ready to adventure !`);
-            await rarity.adventure(id);
+            let trx = await rarity.adventure(id);
+            await trx.wait();
         }
     }
 }
@@ -60,12 +68,12 @@ export function formatValue(value: BigNumber) {
     return ethers.utils.formatUnits(value.toString(), 18);
 }
 
-export async function rarityInstance(): Promise<Rarity> {
-    const [deployer] = await ethers.getSigners();
-
-    Rarity__factory.connect(RARITY_CONTRACT, deployer)
-
+export async function rarityInstance(deployer): Promise<Rarity> {
     return Rarity__factory.connect(RARITY_CONTRACT, deployer);
+}
+
+export async function rarityGoldInstance(deployer) {
+    return RarityGold__factory.connect(RARITY_GOLD_CONTRACT, deployer);
 }
 
 export const TOKEN_IDS = process.env.TOKEN_IDS.split(",");

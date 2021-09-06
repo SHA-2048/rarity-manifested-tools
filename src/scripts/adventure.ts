@@ -2,9 +2,11 @@ import {
     Rarity
 } from "../contracts";
 import {adventure, rarityInstance} from "./common";
+import {ethers} from "hardhat";
 
 async function main() {
-    const rarity: Rarity = await rarityInstance();
+    const [deployer] = await ethers.getSigners();
+    const rarity: Rarity = await rarityInstance(deployer);
     await adventure(rarity);
 }
 
