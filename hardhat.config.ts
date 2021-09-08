@@ -9,7 +9,6 @@ const config: HardhatUserConfig = {
     ftm_mainnet: {
       url: "https://rpc.ftm.tools",
       chainId: 250,
-      gasPrice: 50000000000,
       accounts: [`0x${process.env.WALLET_PRIVATE_KEY}`],
     },
   },
