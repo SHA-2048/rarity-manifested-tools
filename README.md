@@ -1,3 +1,8 @@
+> :warning: This repository is deprecated
+> All functionality is now ported onto https://github.com/vfat-tools/adventure-party, 
+> where you can use more efficient implementation using an aggregator smart contract
+
+
 # Rarity Manifested Tools
 
 The current repo contains tooling for automating the following activities, on a given list of sommoners:
